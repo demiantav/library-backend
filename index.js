@@ -1,5 +1,6 @@
 import { ApolloServer } from '@apollo/server';
 import { startStandaloneServer } from '@apollo/server/standalone';
+import { v4 } from 'uuid';
 
 let authors = [
   {
@@ -106,18 +107,28 @@ const typeDefs = `
     genres: [String!]!
   }
 
+  type Author {
+   name: String!
+   id: ID!
+   born: Int
+  }
+
   type Authors {
    name: String!
    bookCount: Int!
   }
 
+ 
+
   type Query {
     dummy: Int
     bookCount: Int
     authorCount: Int
-    allBooks: [Books!]!
+    allBooks(author: String, genre: String): [Books!]!
+    allAuthors: [Authors!]!
     
   }
+
 `;
 
 const resolvers = {
@@ -125,7 +136,21 @@ const resolvers = {
     dummy: () => 0,
     bookCount: () => books.length,
     authorCount: () => authors.length,
-    allBooks: () => books,
+    allBooks: (root, args) => {
+      return books.filter((book) => {
+        const matchesAuthor = args.author ? book.author === args.author : true;
+        const matchesGenre = args.genre ? book.genres.includes(args.genre) : true;
+        return matchesAuthor && matchesGenre;
+      });
+    },
+    allAuthors: () => {
+      return authors.map((author) => {
+        return {
+          name: author.name,
+          bookCount: books.filter((book) => book.author === author.name).length,
+        };
+      });
+    },
   },
 };
 
