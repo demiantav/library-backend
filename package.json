@@ -12,7 +12,10 @@
   "description": "",
   "dependencies": {
     "@apollo/server": "^4.12.2",
+    "dotenv": "^17.2.3",
     "graphql": "^16.11.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.19.1",
     "uid": "^2.0.2",
     "uuid": "^11.1.0"
   },
